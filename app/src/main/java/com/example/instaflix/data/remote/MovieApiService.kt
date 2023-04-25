@@ -12,7 +12,7 @@ interface MovieApiService {
      * This is a release type query that looks for all movies that have a release type of 2 or 3
      * within the specified date range.
      */
-    @GET("/movie/now_playing")
+    @GET("movie/now_playing")
     suspend fun getNowPlaying(
         @Query("language") language: String = "es",
         @Query("page") page: Int = 1
@@ -21,16 +21,16 @@ interface MovieApiService {
     /**
      * Get a list of the current popular movies on TMDB. This list updates daily.
      */
-    @GET("/movie/popular")
+    @GET("movie/popular")
     suspend fun getPopular(
         @Query("language") language: String = "es",
         @Query("page") page: Int = 1
-    ): Response<MovieResponse>
+    ): MovieResponse
 
     /**
      * Get the top rated movies on TMDB.
      */
-    @GET("/movie/top_rated")
+    @GET("movie/top_rated")
     suspend fun getTopRated(
         @Query("language") language: String = "es",
         @Query("page") page: Int = 1
@@ -41,7 +41,7 @@ interface MovieApiService {
      * This is a release type query that looks for all movies that have a release
      * type of 2 or 3 within the specified date range.
      */
-    @GET("/movie/upcoming")
+    @GET("movie/upcoming")
     suspend fun getUpcoming(
         @Query("language") language: String = "es",
         @Query("page") page: Int = 1
