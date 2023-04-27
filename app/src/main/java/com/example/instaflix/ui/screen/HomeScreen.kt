@@ -36,6 +36,7 @@ fun HomeScreen() {
     val topRatedMovies = moviesViewModel.getTopRatedMovies().collectAsLazyPagingItems()
 
     val popularTvShow = moviesViewModel.getPopularTvShow().collectAsLazyPagingItems()
+    val topRatedTvShow = moviesViewModel.getTopRatedTvShow().collectAsLazyPagingItems()
 
     Column(
         modifier = Modifier
@@ -109,7 +110,6 @@ fun HomeScreen() {
             }
         }
 
-
         Text(
             text = stringResource(R.string.tv_show_popular),
             style = MaterialTheme.typography.titleMedium,
@@ -127,6 +127,27 @@ fun HomeScreen() {
             item {
                 LoadState(loadState = loadState, popularTvShow.itemCount, onMovieRefresh = {
                     popularTvShow.refresh()
+                })
+            }
+        }
+
+        Text(
+            text = stringResource(R.string.tv_show_top_rated),
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(16.dp),
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        LazyRow {
+            items(items = topRatedTvShow) { movie ->
+                movie?.let {
+                    MoviePoster(posrterPath = it.posterPath)
+                }
+            }
+
+            val loadState = topRatedTvShow.loadState.mediator
+            item {
+                LoadState(loadState = loadState, topRatedTvShow.itemCount, onMovieRefresh = {
+                    topRatedTvShow.refresh()
                 })
             }
         }
