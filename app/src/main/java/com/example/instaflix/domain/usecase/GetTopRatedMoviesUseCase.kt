@@ -6,9 +6,9 @@ import com.example.instaflix.domain.repository.MovieRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetPopularMoviesUseCase @Inject constructor(
+class GetTopRatedMoviesUseCase @Inject constructor(
     private val movieRepository: MovieRepository,
 ) {
     operator fun invoke(): Flow<PagingData<MovieEntity>> =
-        movieRepository.getPopularMovies()
+        movieRepository.getTopRatedMovies()
 }

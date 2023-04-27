@@ -1,4 +1,4 @@
-package com.example.instaflix.data.repository
+package com.example.instaflix.data.factory.remoteMediators
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
@@ -6,15 +6,16 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.example.instaflix.data.local.MoviesDatabase
+import com.example.instaflix.data.local.entity.MovieCategoryEntity
 import com.example.instaflix.data.local.entity.MovieEntity
 import com.example.instaflix.data.local.entity.RemoteKeys
 import com.example.instaflix.data.mappers.toEntity
 import com.example.instaflix.data.remote.MovieApiService
+import com.example.instaflix.utils.Constants
 import kotlinx.coroutines.delay
 import retrofit2.HttpException
 import java.io.IOException
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
 /**
  * RemoteMediator acts as a signal from the Paging library when the app has run out of cached data.
@@ -22,10 +23,10 @@ import javax.inject.Inject
  * where a PagingSource can load it and provide it to the UI to display.
  */
 @OptIn(ExperimentalPagingApi::class)
-class MoviesRemoteMediator @Inject constructor (
+class TopRatedMoviesRemoteMediator(
     private val moviesApiService: MovieApiService,
     private val moviesDatabase: MoviesDatabase,
-): RemoteMediator<Int, MovieEntity>() {
+) : RemoteMediator<Int, MovieEntity>() {
     /**
      * When additional data is needed, the Paging library calls the load() method from the RemoteMediator implementation.
      * This function typically fetches the new data from a network source and saves it to local storage.
@@ -44,7 +45,10 @@ class MoviesRemoteMediator @Inject constructor (
     override suspend fun initialize(): InitializeAction {
         val cacheTimeout = TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS)
 
-        return if (System.currentTimeMillis() - (moviesDatabase.getRemoteKeysDao().getCreationTime() ?: 0) < cacheTimeout) {
+        return if (System.currentTimeMillis() - (moviesDatabase.getRemoteKeysDao().getCreationTime(
+                Constants.CATEGORY_TOP_RATED
+            ) ?: 0) < cacheTimeout
+        ) {
             // Cached data is up-to-date, so there is no need to re-fetch
             // from the network.
             InitializeAction.SKIP_INITIAL_REFRESH
@@ -65,7 +69,8 @@ class MoviesRemoteMediator @Inject constructor (
         return state.pages.lastOrNull {
             it.data.isNotEmpty()
         }?.data?.lastOrNull()?.let { movie ->
-            moviesDatabase.getRemoteKeysDao().getRemoteKeyByMovieID(movie.id)
+            moviesDatabase.getRemoteKeysDao()
+                .getRemoteKeyByMovieIDFilterByCategory(movie.id, Constants.CATEGORY_TOP_RATED)
         }
     }
 
@@ -78,7 +83,8 @@ class MoviesRemoteMediator @Inject constructor (
         return state.pages.firstOrNull {
             it.data.isNotEmpty()
         }?.data?.firstOrNull()?.let { movie ->
-            moviesDatabase.getRemoteKeysDao().getRemoteKeyByMovieID(movie.id)
+            moviesDatabase.getRemoteKeysDao()
+                .getRemoteKeyByMovieIDFilterByCategory(movie.id, Constants.CATEGORY_TOP_RATED)
         }
     }
 
@@ -93,7 +99,8 @@ class MoviesRemoteMediator @Inject constructor (
         // Get the item closest to the anchor position
         return state.anchorPosition?.let { position ->
             state.closestItemToPosition(position)?.id?.let { id ->
-                moviesDatabase.getRemoteKeysDao().getRemoteKeyByMovieID(id)
+                moviesDatabase.getRemoteKeysDao()
+                    .getRemoteKeyByMovieIDFilterByCategory(id, Constants.CATEGORY_TOP_RATED)
             }
         }
     }
@@ -116,12 +123,15 @@ class MoviesRemoteMediator @Inject constructor (
                 val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
                 remoteKeys?.nextKey?.minus(1) ?: 1
             }
+
             LoadType.PREPEND -> {
                 val remoteKeys = getRemoteKeyForFirstItem(state)
                 // If remoteKeys is null, that means the refresh result is not in the database yet.
                 val prevKey = remoteKeys?.prevKey
-                prevKey ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
+                prevKey
+                    ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
             }
+
             LoadType.APPEND -> {
                 val remoteKeys = getRemoteKeyForLastItem(state)
 
@@ -131,12 +141,13 @@ class MoviesRemoteMediator @Inject constructor (
                 // If remoteKeys is NOT NULL but its nextKey is null, that means we've reached
                 // the end of pagination for append.
                 val nextKey = remoteKeys?.nextKey
-                nextKey ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
+                nextKey
+                    ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
             }
         }
 
         try {
-            val apiResponse = moviesApiService.getPopular(page = page)
+            val apiResponse = moviesApiService.getTopRated(page = page)
 
             delay(1000L) //TODO For testing only!
 
@@ -145,17 +156,33 @@ class MoviesRemoteMediator @Inject constructor (
 
             moviesDatabase.withTransaction {
                 if (loadType == LoadType.REFRESH) {
-                    moviesDatabase.getRemoteKeysDao().clearRemoteKeys()
-                    moviesDatabase.getMoviesDao().clearAllMovies()
+                    moviesDatabase.getRemoteKeysDao().clearRemoteKeys(Constants.CATEGORY_TOP_RATED)
+                    moviesDatabase.getMovieCategoryDao()
+                        .clearAllMovies(Constants.CATEGORY_TOP_RATED)
                 }
                 val prevKey = if (page > 1) page - 1 else null
                 val nextKey = if (endOfPaginationReached) null else page + 1
                 val remoteKeys = movies.map {
-                    RemoteKeys(movieID = it.id, prevKey = prevKey, currentPage = page, nextKey = nextKey)
+                    RemoteKeys(
+                        movieID = it.id,
+                        categoryId = Constants.CATEGORY_TOP_RATED,
+                        prevKey = prevKey,
+                        currentPage = page,
+                        nextKey = nextKey
+                    )
+                }
+                val movieCategoryEntity = movies.map {
+                    MovieCategoryEntity(
+                        movieId = it.id,
+                        categoryId = Constants.CATEGORY_TOP_RATED,
+                        page = page
+                    )
                 }
 
                 moviesDatabase.getRemoteKeysDao().insertAll(remoteKeys)
-                moviesDatabase.getMoviesDao().insertAll(movies.map { movieDto -> movieDto.toEntity(page) })
+                moviesDatabase.getMoviesDao()
+                    .insertAll(movies.map { movieDto -> movieDto.toEntity(page) })
+                moviesDatabase.getMovieCategoryDao().insertAll(movieCategoryEntity)
             }
             return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (error: IOException) {

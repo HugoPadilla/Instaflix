@@ -6,9 +6,11 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "remote_key")
 data class RemoteKeys(
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey(autoGenerate = true)
+    val id: Int? = null,
     @ColumnInfo(name = "movie_id")
     val movieID: Int,
+    val categoryId: Int,
     val prevKey: Int?,
     val currentPage: Int,
     val nextKey: Int?,
