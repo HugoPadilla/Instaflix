@@ -35,6 +35,8 @@ fun HomeScreen() {
     val popularMovies = moviesViewModel.getPopularMovies().collectAsLazyPagingItems()
     val topRatedMovies = moviesViewModel.getTopRatedMovies().collectAsLazyPagingItems()
 
+    val popularTvShow = moviesViewModel.getPopularTvShow().collectAsLazyPagingItems()
+
     Column(
         modifier = Modifier
             .verticalScroll(state = rememberScrollState())
@@ -67,14 +69,14 @@ fun HomeScreen() {
             text = stringResource(R.string.movie_popular),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(16.dp),
-            color= MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground
         )
         LazyRow {
             items(
                 items = popularMovies
             ) { movie ->
                 movie?.let {
-                    MoviePoster(movie = it)
+                    MoviePoster(posrterPath = it.posterPath)
                 }
             }
 
@@ -90,12 +92,12 @@ fun HomeScreen() {
             text = stringResource(R.string.movie_top_rated),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(16.dp),
-            color= MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground
         )
         LazyRow {
             items(items = topRatedMovies) { movie ->
                 movie?.let {
-                    MoviePoster(movie = it)
+                    MoviePoster(posrterPath = it.posterPath)
                 }
             }
 
@@ -108,6 +110,26 @@ fun HomeScreen() {
         }
 
 
+        Text(
+            text = stringResource(R.string.tv_show_popular),
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(16.dp),
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        LazyRow {
+            items(items = popularTvShow) { movie ->
+                movie?.let {
+                    MoviePoster(posrterPath = it.posterPath)
+                }
+            }
+
+            val loadState = popularTvShow.loadState.mediator
+            item {
+                LoadState(loadState = loadState, popularTvShow.itemCount, onMovieRefresh = {
+                    popularTvShow.refresh()
+                })
+            }
+        }
     }
 }
 

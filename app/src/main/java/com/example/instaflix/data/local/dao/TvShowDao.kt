@@ -12,7 +12,7 @@ interface TvShowDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(movies: List<TvShowEntity>)
 
-    @Query("Select * From tv_show INNER JOIN movie_category ON movie_category.movieId = tv_show.id WHERE categoryId = :category Order By page")
+    @Query("Select * From tv_show INNER JOIN tv_show_category ON tv_show_category.tvShowId = tv_show.id WHERE categoryId = :category Order By page")
     fun getTvShow(category: Int): PagingSource<Int, TvShowEntity>
 
 }

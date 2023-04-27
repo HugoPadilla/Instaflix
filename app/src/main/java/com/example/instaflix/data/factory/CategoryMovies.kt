@@ -5,3 +5,9 @@ enum class CategoryMovies {
     TOP_RATED,
     PLAYING_NOW,
 }
+
+enum class CategoryTvShow {
+    UPCOMING,
+    POPULAR,
+    TOP_RATED,
+}

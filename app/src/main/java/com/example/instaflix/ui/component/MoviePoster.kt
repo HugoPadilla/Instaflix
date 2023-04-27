@@ -28,16 +28,16 @@ import com.example.instaflix.ui.theme.InstaflixTheme
 import com.example.instaflix.utils.Constants
 
 @Composable
-fun MoviePoster(movie: MovieEntity) {
+fun MoviePoster(posrterPath: String?) {
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (movie.posterPath != null) {
+        if (posrterPath != null) {
             var isImageLoading by remember { mutableStateOf(false) }
 
             val painter = rememberAsyncImagePainter(
-                model = Constants.BASE_IMAGE_URL + "w185" + movie.posterPath,
+                model = Constants.BASE_IMAGE_URL + "w185" + posrterPath,
             )
 
             isImageLoading = when (painter.state) {
@@ -76,16 +76,7 @@ fun MoviePoster(movie: MovieEntity) {
 fun MoviePosterPrev() {
     InstaflixTheme {
         MoviePoster(
-            MovieEntity(
-                0,
-                "Title",
-                "lorem ipsu doloro",
-                popularity = 1200.0,
-                "argt3ethkm",
-                "22-2-2023",
-                "Title",
-                1
-            )
+            posrterPath = ""
         )
     }
 }
