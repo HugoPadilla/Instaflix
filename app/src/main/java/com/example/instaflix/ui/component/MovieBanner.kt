@@ -10,13 +10,11 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.sharp.Info
+import androidx.compose.material.icons.sharp.PlayArrow
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,24 +22,23 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.example.instaflix.data.local.entity.MovieEntity
+import com.example.instaflix.domain.models.Movie
 import com.example.instaflix.ui.theme.InstaflixTheme
 import com.example.instaflix.utils.Constants
 
 @Composable
-fun MovieHeader(modifier: Modifier = Modifier, movie: MovieEntity) {
+fun MovieBanner(modifier: Modifier = Modifier, movie: Movie) {
 
     Box(
         modifier = modifier,
-        contentAlignment = Alignment.BottomCenter,
+        contentAlignment = Alignment.Center,
     ) {
 
         val painter = rememberAsyncImagePainter(
-            model = Constants.BASE_IMAGE_URL+ "original" + movie.posterPath,
+            model = Constants.BASE_IMAGE_URL + "w780" + movie.backdropPath,
         )
 
         val screenWidthDp = LocalConfiguration.current.screenWidthDp
@@ -51,7 +48,7 @@ fun MovieHeader(modifier: Modifier = Modifier, movie: MovieEntity) {
             contentDescription = null,
             modifier = Modifier
                 .width(screenWidthDp.dp)
-                .aspectRatio(100 / 150f),
+                .aspectRatio(1.78f / 1f),
             contentScale = ContentScale.FillBounds,
         )
 
@@ -60,7 +57,7 @@ fun MovieHeader(modifier: Modifier = Modifier, movie: MovieEntity) {
         Canvas(
             modifier = Modifier
                 .width(screenWidthDp.dp)
-                .aspectRatio(100 / 150f)
+                .aspectRatio(1.78f / 1f)
         ) {
             drawRect(brush)
         }
@@ -72,24 +69,10 @@ fun MovieHeader(modifier: Modifier = Modifier, movie: MovieEntity) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(
-                text = movie.title,
-                color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Center,
-                softWrap = true,
-                style = MaterialTheme.typography.displayMedium
-            )
-            Text(
-                text = movie.releaseDate.toString(),
-                color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Center,
-                softWrap = true,
-                style = MaterialTheme.typography.bodyMedium
-            )
             Row {
                 IconButton(onClick = { /*TODO*/ }) {
                     Icon(
-                        imageVector = Icons.Sharp.Info,
+                        imageVector = Icons.Sharp.PlayArrow,
                         contentDescription = null,
                         tint = Color.White
                     )
@@ -104,12 +87,12 @@ fun MovieHeader(modifier: Modifier = Modifier, movie: MovieEntity) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun MovieHeaderPrev() {
+fun MovieBannerPrev() {
     InstaflixTheme {
         Scaffold {
-            MovieHeader(
+            MovieBanner(
                 modifier = Modifier.padding(it),
-                movie = MovieEntity(0, "", "", 0.0, "","", "", "", 0)
+                movie = Movie(1, "", "", 0.0, "", "", "", "")
             )
         }
     }

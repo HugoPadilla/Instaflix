@@ -1,6 +1,7 @@
 package com.example.instaflix.ui.component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -23,21 +24,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
-import com.example.instaflix.data.local.entity.MovieEntity
 import com.example.instaflix.ui.theme.InstaflixTheme
 import com.example.instaflix.utils.Constants
 
 @Composable
-fun MoviePoster(posrterPath: String?) {
+fun MoviePoster(posterPath: String?, onClick: () -> Unit) {
     Row(
+        modifier = Modifier.clickable {
+            onClick()
+        },
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (posrterPath != null) {
+        if (posterPath != null) {
             var isImageLoading by remember { mutableStateOf(false) }
 
             val painter = rememberAsyncImagePainter(
-                model = Constants.BASE_IMAGE_URL + "w185" + posrterPath,
+                model = Constants.BASE_IMAGE_URL + "w185" + posterPath,
             )
 
             isImageLoading = when (painter.state) {
@@ -76,7 +79,8 @@ fun MoviePoster(posrterPath: String?) {
 fun MoviePosterPrev() {
     InstaflixTheme {
         MoviePoster(
-            posrterPath = ""
+            posterPath = "",
+            onClick = {}
         )
     }
 }

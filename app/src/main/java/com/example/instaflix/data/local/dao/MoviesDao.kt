@@ -15,5 +15,8 @@ interface MoviesDao {
     @Query("Select * From movies INNER JOIN movie_category ON movie_category.movieId = movies.id WHERE categoryId = :category Order By page")
     fun getMovies(category: Int): PagingSource<Int, MovieEntity>
 
+    @Query("Select * From movies Where id = :movieId limit 1")
+    suspend fun getMovieById(movieId: String): MovieEntity
+
 
 }

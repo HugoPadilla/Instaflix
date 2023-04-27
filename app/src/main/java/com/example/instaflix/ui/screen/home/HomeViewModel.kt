@@ -1,4 +1,4 @@
-package com.example.instaflix.ui.screen
+package com.example.instaflix.ui.screen.home
 
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagingData

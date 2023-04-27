@@ -16,6 +16,8 @@ data class MovieEntity(
     val popularity: Double,
     @ColumnInfo(name = "poster_path")
     val posterPath: String?,
+    @ColumnInfo(name = "backdrop_path")
+    val backdropPath: String?,
     @ColumnInfo(name = "release_date")
     val releaseDate: String?,
     @ColumnInfo(name = "title")

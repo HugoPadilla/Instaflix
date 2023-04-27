@@ -2,6 +2,7 @@ package com.example.instaflix.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -13,23 +14,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.example.instaflix.R
 import com.example.instaflix.ui.component.LoadState
 import com.example.instaflix.ui.component.MovieHeader
 import com.example.instaflix.ui.component.MoviePoster
-import com.example.instaflix.ui.theme.InstaflixTheme
+import com.example.instaflix.ui.screen.home.HomeViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.yield
 
 @Composable
-fun HomeScreen() {
-
-    val moviesViewModel = hiltViewModel<HomeViewModel>()
+fun HomeScreen(moviesViewModel: HomeViewModel, onNavigationToDetails: (movieId: Int) -> Unit) {
 
     val playingNowMovies = moviesViewModel.getPlayingNow().collectAsLazyPagingItems()
     val popularMovies = moviesViewModel.getPopularMovies().collectAsLazyPagingItems()
@@ -41,6 +38,7 @@ fun HomeScreen() {
 
     Column(
         modifier = Modifier
+            .fillMaxSize()
             .verticalScroll(state = rememberScrollState())
             .background(MaterialTheme.colorScheme.background)
     ) {
@@ -78,7 +76,9 @@ fun HomeScreen() {
                 items = popularMovies
             ) { movie ->
                 movie?.let {
-                    MoviePoster(posrterPath = it.posterPath)
+                    MoviePoster(
+                        posterPath = it.posterPath,
+                        onClick = { onNavigationToDetails(it.id) })
                 }
             }
 
@@ -99,7 +99,9 @@ fun HomeScreen() {
         LazyRow {
             items(items = topRatedMovies) { movie ->
                 movie?.let {
-                    MoviePoster(posrterPath = it.posterPath)
+                    MoviePoster(
+                        posterPath = it.posterPath,
+                        onClick = { onNavigationToDetails(it.id) })
                 }
             }
 
@@ -120,7 +122,9 @@ fun HomeScreen() {
         LazyRow {
             items(items = popularTvShow) { movie ->
                 movie?.let {
-                    MoviePoster(posrterPath = it.posterPath)
+                    MoviePoster(
+                        posterPath = it.posterPath,
+                        onClick = {  })
                 }
             }
 
@@ -141,7 +145,9 @@ fun HomeScreen() {
         LazyRow {
             items(items = topRatedTvShow) { movie ->
                 movie?.let {
-                    MoviePoster(posrterPath = it.posterPath)
+                    MoviePoster(
+                        posterPath = it.posterPath,
+                        onClick = {  })
                 }
             }
 
@@ -162,7 +168,9 @@ fun HomeScreen() {
         LazyRow {
             items(items = upcomingTvShow) { movie ->
                 movie?.let {
-                    MoviePoster(posrterPath = it.posterPath)
+                    MoviePoster(
+                        posterPath = it.posterPath,
+                        onClick = {  })
                 }
             }
 
@@ -173,13 +181,5 @@ fun HomeScreen() {
                 })
             }
         }
-    }
-}
-
-@Preview
-@Composable
-fun HomeScreenPrev() {
-    InstaflixTheme {
-        HomeScreen()
     }
 }

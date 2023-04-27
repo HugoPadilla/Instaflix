@@ -12,6 +12,7 @@ fun MovieDto.toEntity(pageInt: Int): MovieEntity {
         overview = overview,
         popularity = popularity,
         posterPath = posterPath,
+        backdropPath = backdropPath,
         releaseDate = releaseDate,
         title = title,
         page = pageInt

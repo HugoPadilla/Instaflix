@@ -8,6 +8,8 @@ import com.example.instaflix.data.factory.CategoryMovies
 import com.example.instaflix.data.factory.RemoteMediatorFactory
 import com.example.instaflix.data.local.MoviesDatabase
 import com.example.instaflix.data.local.entity.MovieEntity
+import com.example.instaflix.domain.mappers.toDomain
+import com.example.instaflix.domain.models.Movie
 import com.example.instaflix.domain.repository.MovieRepository
 import com.example.instaflix.utils.Constants
 import com.example.instaflix.utils.Constants.PAGE_SIZE
@@ -61,5 +63,9 @@ class MovieRepositoryImpl @Inject constructor(
             },
             remoteMediator = remoteMediatorFactory.create(CategoryMovies.PLAYING_NOW)
         ).flow
+
+    override suspend fun getMovieById(movieId: String): Movie {
+        return moviesDatabase.getMoviesDao().getMovieById(movieId).toDomain()
+    }
 
 }
