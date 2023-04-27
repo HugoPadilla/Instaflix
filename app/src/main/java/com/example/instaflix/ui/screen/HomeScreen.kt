@@ -1,5 +1,6 @@
 package com.example.instaflix.ui.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
@@ -35,7 +36,9 @@ fun HomeScreen() {
     val topRatedMovies = moviesViewModel.getTopRatedMovies().collectAsLazyPagingItems()
 
     Column(
-        modifier = Modifier.verticalScroll(state = rememberScrollState())
+        modifier = Modifier
+            .verticalScroll(state = rememberScrollState())
+            .background(MaterialTheme.colorScheme.background)
     ) {
         val pagerState = rememberLazyListState(
             initialFirstVisibleItemIndex = 1,
@@ -63,7 +66,8 @@ fun HomeScreen() {
         Text(
             text = stringResource(R.string.movie_popular),
             style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
+            color= MaterialTheme.colorScheme.onBackground
         )
         LazyRow {
             items(
@@ -85,7 +89,8 @@ fun HomeScreen() {
         Text(
             text = stringResource(R.string.movie_top_rated),
             style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
+            color= MaterialTheme.colorScheme.onBackground
         )
         LazyRow {
             items(items = topRatedMovies) { movie ->
