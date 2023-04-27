@@ -9,5 +9,5 @@ interface TvShowRepository {
 
     fun getTopRated(): Flow<PagingData<TvShowEntity>>
 
-    fun getNowPlaying(): Flow<PagingData<TvShowEntity>>
+    fun getUpcoming(): Flow<PagingData<TvShowEntity>>
 }

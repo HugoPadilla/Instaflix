@@ -9,6 +9,7 @@ import com.example.instaflix.domain.usecase.GetPopularMoviesUseCase
 import com.example.instaflix.domain.usecase.GetPopularTvShowUseCase
 import com.example.instaflix.domain.usecase.GetTopRatedMoviesUseCase
 import com.example.instaflix.domain.usecase.GetTopRatedTvShowUseCase
+import com.example.instaflix.domain.usecase.GetUpcomingTvShowUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -20,6 +21,7 @@ class HomeViewModel @Inject constructor(
     private val getTopRatedMoviesUseCase: GetTopRatedMoviesUseCase,
     private val getPopularTvShowUseCase: GetPopularTvShowUseCase,
     private val getTopRatedTvShowUseCase: GetTopRatedTvShowUseCase,
+    private val getUpcomingTvShowUseCase: GetUpcomingTvShowUseCase,
 ) : ViewModel() {
 
     fun getPlayingNow(): Flow<PagingData<MovieEntity>> = getPlayingNowMoviesUseCase()
@@ -31,4 +33,6 @@ class HomeViewModel @Inject constructor(
     fun getPopularTvShow(): Flow<PagingData<TvShowEntity>> = getPopularTvShowUseCase()
 
     fun getTopRatedTvShow(): Flow<PagingData<TvShowEntity>> = getTopRatedTvShowUseCase()
+
+    fun getUpcomingTvShow(): Flow<PagingData<TvShowEntity>> = getUpcomingTvShowUseCase()
 }

@@ -4,6 +4,7 @@ object Constants {
     const val CATEGORY_POPULAR = 1
     const val CATEGORY_TOP_RATED = 2
     const val CATEGORY_PLAYING_NOW = 3
+    const val CATEGORY_UPCOMING = 4
 
 
     const val BASE_API_URL = "https://api.themoviedb.org/3/"

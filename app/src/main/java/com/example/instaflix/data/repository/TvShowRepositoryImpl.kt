@@ -47,7 +47,17 @@ class TvShowRepositoryImpl @Inject constructor(
             remoteMediator = remoteMediatorFactory.create(CategoryTvShow.TOP_RATED)
         ).flow
 
-    override fun getNowPlaying(): Flow<PagingData<TvShowEntity>> {
-        TODO("Not yet implemented")
-    }
+    @OptIn(ExperimentalPagingApi::class)
+    override fun getUpcoming(): Flow<PagingData<TvShowEntity>> =
+        Pager(
+            config = PagingConfig(
+                pageSize = Constants.PAGE_SIZE,
+                prefetchDistance = 10,
+                initialLoadSize = Constants.PAGE_SIZE,
+            ),
+            pagingSourceFactory = {
+                moviesDatabase.getTvShowDao().getTvShow(Constants.CATEGORY_UPCOMING)
+            },
+            remoteMediator = remoteMediatorFactory.create(CategoryTvShow.UPCOMING)
+        ).flow
 }
